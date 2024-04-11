@@ -2,35 +2,48 @@
 using MongoDB.Driver;
 using MongoDB.Entities;
 using SearchService.Models;
+using SearchService.Services;
 
-namespace SearchService.Data;
-
-public class DbInitializer
+namespace SearchService.Data
 {
-    public static async Task InitDb(WebApplication app)
+    public class DbInitializer
     {
-        await DB.InitAsync("SearchDb", MongoClientSettings
-            .FromConnectionString(app.Configuration.GetConnectionString("MongoDbConnection")));
-
-        await DB.Index<Item>()
-            .Key(x => x.Platform, KeyType.Text)
-            .Key(x => x.Title, KeyType.Text)
-            .Key(x => x.Genre, KeyType.Text)
-            .CreateAsync();
-
-        var count = await DB.CountAsync<Item>();
-
-        if (count == 0)
+        // This method initializes the database and populates it with data from the AuctionService
+        public static async Task InitDb(WebApplication app)
         {
-            Console.WriteLine("No existing Data. Will seed some data");
-            var itemData = await File.ReadAllTextAsync("Data/auctions.json");
+            // Initialize the MongoDB database with the provided connection string
+            await DB.InitAsync("SearchDb", MongoClientSettings
+                .FromConnectionString(app.Configuration.GetConnectionString("MongoDbConnection")));
 
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            // Create text indexes on the Platform, Title, and Genre fields of the Item collection
+            // This will improve search performance on these fields
+            await DB.Index<Item>()
+                .Key(x => x.Platform, KeyType.Text)
+                .Key(x => x.Title, KeyType.Text)
+                .Key(x => x.Genre, KeyType.Text)
+                .CreateAsync();
 
-            var items = JsonSerializer.Deserialize<List<Item>>(itemData, options);
+            // Get the count of documents in the Item collection
+            var count = await DB.CountAsync<Item>();
 
-            await DB.SaveAsync(items);
+            // Create a new scope for dependency injection
+            using var scope = app.Services.CreateScope();
+
+            // Get an instance of the AuctionSvcHttpClient service
+            // This service is used to make HTTP requests to the AuctionService
+            var httpClient = scope.ServiceProvider.GetRequiredService<AuctionSvcHttpClient>();
+
+            // Get items from the AuctionService
+            var items = await httpClient.GetItemsForSearchDb();
+
+            // Log the count of items retrieved from the AuctionService
+            Console.WriteLine($"Items from AuctionService: {items.Count}");
+
+            // If there are any items, save them to the MongoDB database
+            if (items.Count > 0)
+            {
+                await DB.SaveAsync(items);
+            }
         }
     }
-
 }
