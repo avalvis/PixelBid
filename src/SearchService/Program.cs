@@ -3,13 +3,14 @@ using MongoDB.Entities;
 using SearchService.Data;
 using SearchService.Models;
 using SearchService.Services;
+using SearchService.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddHttpClient<AuctionSvcHttpClient>();
+builder.Services.AddHttpClient<AuctionSvcHttpClient>().AddPolicyHandler(PollyUtility.GetPolicy());
 
 
 var app = builder.Build();
@@ -20,16 +21,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-try
+app.Lifetime.ApplicationStarted.Register(async () =>
 {
-    await DbInitializer.InitDb(app);
-}
-catch (Exception e)
-{
+    try
+    {
+        await DbInitializer.InitDb(app);
+    }
+    catch (Exception e)
+    {
 
-    Console.WriteLine("Error initializing the database");
-    Console.WriteLine(e.Message);
-}
+        Console.WriteLine("Error initializing the database");
+        Console.WriteLine(e.Message);
+    }
+});
+
+
 
 app.Run();
+
 
