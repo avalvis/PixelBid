@@ -1,4 +1,6 @@
 // Import necessary namespaces
+using MassTransit;
+using SearchService.Consumers;
 using SearchService.Data;
 using SearchService.Services;
 using SearchService.Utilities;
@@ -11,8 +13,30 @@ var builder = WebApplication.CreateBuilder(args);
 // Add the MVC controllers service to the application
 builder.Services.AddControllers();
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 // Add an HTTP client for the AuctionSvcHttpClient service with a Polly policy for handling HTTP request retries
 builder.Services.AddHttpClient<AuctionSvcHttpClient>().AddPolicyHandler(PollyUtility.GetPolicy());
+
+// Add MassTransit to the services and configure it
+builder.Services.AddMassTransit(x =>
+{
+    // Add the consumers to the MassTransit configuration
+    x.AddConsumersFromNamespaceContaining<AuctionCreatedConsumer>();
+
+    // Configure the endpoint name formatter to use kebab case
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("SearchService", false));
+
+    // Configure MassTransit to use RabbitMQ as the message broker
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        // Configure the RabbitMQ endpoints based on the registered services
+        // 'context' provides access to the application's services
+        // 'cfg' is used to configure the interaction with RabbitMQ
+        cfg.Host("192.168.1.239");
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 // Build the application
 var app = builder.Build();

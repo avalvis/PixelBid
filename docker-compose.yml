@@ -1,3 +1,6 @@
+# Docker Compose file
+
+# PostgreSQL service
 services:
   postgres:
     image: postgres
@@ -7,6 +10,8 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  # MongoDB service
   mongodb:
     image: mongo
     environment:
@@ -16,5 +21,10 @@ services:
       - 27017:27017
     volumes:
       - mongodata:/var/lib/mongodb/data
-volumes:
-  pgdata:
+
+  # RabbitMQ service
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
