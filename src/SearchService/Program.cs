@@ -1,4 +1,4 @@
-// Import necessary namespaces
+// Program.cs
 using MassTransit;
 using SearchService.Consumers;
 using SearchService.Data;
@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add the MVC controllers service to the application
 builder.Services.AddControllers();
-
+// Add the DbContext service for the SearchServiceContext
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add an HTTP client for the AuctionSvcHttpClient service with a Polly policy for handling HTTP request retries
@@ -29,7 +29,15 @@ builder.Services.AddMassTransit(x =>
 
     // Configure MassTransit to use RabbitMQ as the message broker
     x.UsingRabbitMq((context, cfg) =>
-    {
+    {   // Configure the search-auction-created endpoint
+        cfg.ReceiveEndpoint("search-auction-created", e =>
+        {
+            // Configure the message retry policy for the endpoint
+            e.UseMessageRetry(r => r.Interval(5, 5));
+            // Configure the AuctionCreatedConsumer for the endpoint
+            e.ConfigureConsumer<AuctionCreatedConsumer>(context);
+        });
+
         // Configure the RabbitMQ endpoints based on the registered services
         // 'context' provides access to the application's services
         // 'cfg' is used to configure the interaction with RabbitMQ

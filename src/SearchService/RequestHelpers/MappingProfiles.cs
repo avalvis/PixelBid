@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿// MappingProfiles.cs is a class that defines the mapping profiles for AutoMapper.
+using AutoMapper;
 using Contracts;
 using SearchService.Models;
 
@@ -10,5 +11,6 @@ public class MappingProfiles : Profile
     public MappingProfiles()
     {
         CreateMap<AuctionCreated, Item>();
+        CreateMap<AuctionUpdated, Item>();
     }
 }

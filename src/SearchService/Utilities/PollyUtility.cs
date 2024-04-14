@@ -1,4 +1,5 @@
-﻿// A utility class PollyUtility that provides a method GetPolicy to get a Polly retry policy. 
+﻿// PollyUtility.cs
+// A utility class PollyUtility that provides a method GetPolicy to get a Polly retry policy. 
 // This policy handles transient HTTP errors and HTTP 404 errors by waiting for 2 seconds and then retrying the request. 
 //The request will be retried forever until it succeeds.
 

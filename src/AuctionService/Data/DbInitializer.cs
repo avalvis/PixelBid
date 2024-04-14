@@ -1,4 +1,4 @@
-﻿
+﻿// DbIntializer.cs class to seed the database with some initial data
 using AuctionService.Entities;
 using Microsoft.EntityFrameworkCore;
 

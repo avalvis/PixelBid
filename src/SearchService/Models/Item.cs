@@ -1,4 +1,5 @@
-﻿using MongoDB.Entities;
+﻿// Item.cs is an entity class that represents an item.
+using MongoDB.Entities;
 
 namespace SearchService.Models;
 

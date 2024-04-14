@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿// Items.cs is an entity class that represents an item.
+
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuctionService.Entities;
 

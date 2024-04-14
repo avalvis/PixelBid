@@ -1,4 +1,6 @@
+// Program.cs
 // Import necessary namespaces
+using AuctionService.Consumers;
 using AuctionService.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +24,22 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add MassTransit to the services and configure it
 builder.Services.AddMassTransit(x =>
 {
+    // Add the outbox to the service bus
+    // Configure the outbox to use the specified DbContext
+    x.AddEntityFrameworkOutbox<AuctionDbContext>(o =>
+    {   // Configure the outbox to use a delay of 10 seconds for query retries
+        o.QueryDelay = TimeSpan.FromSeconds(10);
+        // Configure the outbox to use PostgreSQL
+        o.UsePostgres();
+        // Configure the outbox to use the specified DbContext
+        o.UseBusOutbox();
+    });
+    // Add the consumers to the MassTransit configuration
+    x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
+
+    // Configure the endpoint name formatter to use kebab case
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
+
     // Configure MassTransit to use RabbitMQ as the message broker
     x.UsingRabbitMq((context, cfg) =>
     {

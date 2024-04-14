@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿// DbInitializer.cs is responsible for initializing the MongoDB database and populating it with data from the AuctionService
+using MongoDB.Driver;
 using MongoDB.Entities;
 using SearchService.Models;
 using SearchService.Services;

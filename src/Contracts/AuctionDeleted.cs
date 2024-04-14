@@ -1,4 +1,5 @@
-﻿namespace Contracts;
+﻿//AuctionDeleted.cs
+namespace Contracts;
 
 public class AuctionDeleted
 {

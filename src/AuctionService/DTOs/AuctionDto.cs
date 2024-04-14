@@ -1,4 +1,9 @@
-﻿namespace AuctionService.DTOs;
+﻿// AuctionDto.cs is a DTO class that represents an auction. 
+// It contains properties that map to the fields of an auction entity, such as the ID, reserve price, seller, winner, sold amount, 
+// current high bid, created at, updated at, auction end, status, platform, title, year, genre, play hours, and image URL. 
+// This class is used to transfer data between the controller and the client in a structured format. 
+// The DTO class helps to decouple the internal representation of an auction from the external representation, allowing for flexibility in the data transfer process.
+namespace AuctionService.DTOs;
 
 public class AuctionDto
 {

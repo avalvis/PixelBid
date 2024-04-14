@@ -1,4 +1,5 @@
-﻿using MongoDB.Entities;
+﻿// AuctionSvcHttpClient.cs is a service for making HTTP requests to the AuctionService.
+using MongoDB.Entities;
 using SearchService.Models;
 
 namespace SearchService.Services

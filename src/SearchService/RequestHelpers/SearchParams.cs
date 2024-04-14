@@ -1,4 +1,5 @@
-﻿namespace SearchService.RequestHelpers;
+﻿// SearchParams.cs is a new file that defines a class to hold the search parameters.
+namespace SearchService.RequestHelpers;
 
 public class SearchParams
 {

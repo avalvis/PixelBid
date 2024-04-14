@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+﻿// Auction.cs is an entity class that represents an auction.
+using Microsoft.AspNetCore.Http.Features;
 
 namespace AuctionService.Entities;
 

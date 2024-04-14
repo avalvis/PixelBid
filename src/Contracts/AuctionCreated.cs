@@ -1,4 +1,5 @@
-﻿namespace Contracts;
+﻿// AuctionCreated.cs
+namespace Contracts;
 
 public class AuctionCreated
 {

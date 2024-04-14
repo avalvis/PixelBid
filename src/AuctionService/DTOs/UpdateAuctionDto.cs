@@ -1,4 +1,5 @@
-﻿namespace AuctionService.DTOs;
+﻿// UpdateAuctionDto.cs is a DTO class that represents the data required to update an auction.
+namespace AuctionService.DTOs;
 
 public class UpdateAuctionDto
 {

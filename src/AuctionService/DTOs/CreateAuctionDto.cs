@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿//CreateAuctionDto.cs is a DTO class that represents the data required to create a new auction.
+using System.ComponentModel.DataAnnotations;
 
 namespace AuctionService.DTOs;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// SearchController.cs is a controller class that handles search requests for items.
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Entities;
 using SearchService.Models;
 using SearchService.RequestHelpers;

@@ -1,36 +1,40 @@
-﻿using AuctionService.Data;
+﻿//AuctionsController.cs is a controller class for handling HTTP requests related to auctions.
+
+using AuctionService.Data;
 using AuctionService.DTOs;
 using AuctionService.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Contracts;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace AuctionService.Controllers
 {
-    // This class is a controller for handling HTTP requests related to auctions.
+    // AuctionsController is a controller class for handling HTTP requests related to auctions.
     [ApiController]
     [Route("api/auctions")]
     public class AuctionsController : ControllerBase
     {
-        // These are private fields for the database context and the mapper.
+        // Private fields for the database context, the mapper, and the publish endpoint.
         private readonly AuctionDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        // This is the constructor. It's called when an instance of the class is created.
-        public AuctionsController(AuctionDbContext context, IMapper mapper)
+        // Constructor for the AuctionsController class.
+        public AuctionsController(AuctionDbContext context, IMapper mapper, IPublishEndpoint publishEndpoint)
         {
-            // The database context and the mapper are injected into the controller.
             _context = context;
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
 
-        // This method handles GET requests to get all auctions.
+        // HTTP GET method to retrieve all auctions.
         [HttpGet]
         public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions(string date)
         {
-            // This creates a query to get all auctions, ordered by the title of the item.
+            // Query to retrieve all auctions, ordered by the title of the item.
             var query = _context.Auctions.OrderBy(x => x.Item.Title).AsQueryable();
 
             // If a date is provided, the query is updated to only include auctions updated after that date.
@@ -39,102 +43,115 @@ namespace AuctionService.Controllers
                 query = query.Where(x => x.UpdatedAt.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0);
             }
 
-            // The query is executed, and the results are mapped to a list of AuctionDto objects.
+            // Execute the query and map the results to a list of AuctionDto objects.
             return await query.ProjectTo<AuctionDto>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
-        // This method handles GET requests to get a specific auction by ID.
+        // HTTP GET method to retrieve a specific auction by ID.
         [HttpGet("{id}")]
         public async Task<ActionResult<AuctionDto>> GetAuctionById(Guid id)
         {
-            // This creates a query to get the auction with the specified ID, including the related item.
+            // Query to retrieve the auction with the specified ID, including the related item.
             var auctions = await _context.Auctions
                 .Include(x => x.Item)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            // If the auction is not found, a 404 Not Found response is returned.
+            // If the auction is not found, return a 404 Not Found response.
             if (auctions == null)
             {
                 return NotFound();
             }
 
-            // The auction is mapped to an AuctionDto object and returned.
+            // Map the auction to an AuctionDto object and return it.
             return _mapper.Map<AuctionDto>(auctions);
         }
 
-        // This method handles POST requests to create a new auction.
+        // HTTP POST method to create a new auction.
         [HttpPost]
         public async Task<ActionResult<AuctionDto>> CreateAuction(CreateAuctionDto auctionDto)
         {
-            // The auctionDto is mapped to an Auction object.
+            // Map the auctionDto to an Auction object.
             var auction = _mapper.Map<Auction>(auctionDto);
-            // The seller is set to "test" (this should be replaced with the current user).
+            // Set the seller to "test" (this should be replaced with the current user).
             auction.Seller = "test";
 
-            // The auction is added to the database context.
+            // Add the auction to the database context.
             _context.Auctions.Add(auction);
 
-            // The changes are saved to the database.
+            // Map the created auction to an AuctionDto object.
+            var newAuction = _mapper.Map<AuctionDto>(auction);
+
+            // Publish an AuctionCreated event with the created auction.
+            await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+
+            // Save the changes to the database.
             var result = await _context.SaveChangesAsync() > 0;
 
-            // If the save was not successful, a 400 Bad Request response is returned.
+
+            // If the save was not successful, return a 400 Bad Request response.
             if (!result)
             {
                 return BadRequest("Failed to create auction");
             }
 
-            // If the save was successful, a 201 Created response is returned, with the created auction.
-            return CreatedAtAction(nameof(GetAuctionById), new { auction.Id }, _mapper.Map<AuctionDto>(auction));
+            // If the save was successful, return a 201 Created response with the created auction.
+            return CreatedAtAction(nameof(GetAuctionById), new { auction.Id }, newAuction);
         }
 
-        // This method handles PUT requests to update an existing auction.
+        // HTTP PUT method to update an existing auction.
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAuction(Guid Id, UpdateAuctionDto updateAuctionDto)
         {
-            // This creates a query to get the auction with the specified ID, including the related item.
+            // Query to retrieve the auction with the specified ID, including the related item.
             var auction = await _context.Auctions.Include(x => x.Item)
                 .FirstOrDefaultAsync(x => x.Id == Id);
 
-            // If the auction is not found, a 404 Not Found response is returned.
+            // If the auction is not found, return a 404 Not Found response.
             if (auction == null) return NotFound();
 
-            // The auction is updated with the data from the updateAuctionDto.
+            // Update the auction with the data from the updateAuctionDto.
             auction.Item.Platform = updateAuctionDto.Platform ?? auction.Item.Platform;
             auction.Item.Title = updateAuctionDto.Title ?? auction.Item.Title;
             auction.Item.Genre = updateAuctionDto.Genre ?? auction.Item.Genre;
             auction.Item.PlayHours = updateAuctionDto.PlayHours ?? auction.Item.PlayHours;
             auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
 
-            // The changes are saved to the database.
+            // Publish an AuctionUpdated event with the updated auction.
+            await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
+
+            // Save the changes to the database.
             var result = await _context.SaveChangesAsync() > 0;
 
-            // If the save was successful, a 200 OK response is returned.
+            // If the save was successful, return a 200 OK response.
             if (result) return Ok();
 
-            // If the save was not successful, a 400 Bad Request response is returned.
+            // If the save was not successful, return a 400 Bad Request response.
             return BadRequest("Failed to update auction");
         }
 
-        // This method handles DELETE requests to delete an existing auction.
+        // HTTP DELETE method to delete an existing auction.
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAuction(Guid id)
         {
-            // This creates a query to get the auction with the specified ID.
+            // Query to retrieve the auction with the specified ID.
             var auction = await _context.Auctions.FirstOrDefaultAsync(x => x.Id == id);
 
-            // If the auction is not found, a 404 Not Found response is returned.
+            // If the auction is not found, return a 404 Not Found response.
             if (auction == null) return NotFound();
 
-            // The auction is removed from the database context.
+            // Remove the auction from the database context.
             _context.Auctions.Remove(auction);
 
-            // The changes are saved to the database.
+            // Publish an AuctionDeleted event with the ID of the deleted auction.
+            await _publishEndpoint.Publish<AuctionDeleted>(new { Id = auction.Id.ToString() });
+
+            // Save the changes to the database.
             var result = await _context.SaveChangesAsync() > 0;
 
-            // If the save was not successful, a 400 Bad Request response is returned.
+            // If the save was not successful, return a 400 Bad Request response.
             if (!result) return BadRequest("Failed to delete auction");
 
-            // If the save was successful, a 200 OK response is returned.
+            // If the save was successful, return a 200 OK response.
             return Ok();
         }
     }

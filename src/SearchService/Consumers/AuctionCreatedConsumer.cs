@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿// AuctionCreatedConsumer.cs file is responsible for consuming the AuctionCreated event message.
+using AutoMapper;
 using Contracts;
 using MassTransit;
 using MongoDB.Entities;
@@ -20,6 +21,8 @@ public class AuctionCreatedConsumer : IConsumer<AuctionCreated>
         Console.WriteLine("--> AuctionCreatedConsumer received: " + context.Message.Id);
 
         var item = _mapper.Map<Item>(context.Message);
+
+        if (item.Title == "Pacman") throw new Exception("Pacman is not supported");
 
         await item.SaveAsync();
     }
