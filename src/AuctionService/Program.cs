@@ -3,6 +3,7 @@
 using AuctionService.Consumers;
 using AuctionService.Data;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 // Create a new web application builder
@@ -51,13 +52,33 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+
+// Add authentication services to the DI container, specifying JWT Bearer as the default scheme
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        // Set the authority to the URL of the identity service, which is used to validate the tokens
+        options.Authority = builder.Configuration["IdentityServiceUrl"];
+
+        // Disable requiring HTTPS for metadata retrieval. In production, this should be enabled for security
+        options.RequireHttpsMetadata = false;
+
+        // Disable audience validation. In production, this should be enabled and set to the valid audiences
+        options.TokenValidationParameters.ValidateAudience = false;
+
+        // Set the claim type for the user's name in the JWT token to "username"
+        options.TokenValidationParameters.NameClaimType = "username";
+    });
+
 // Build the application
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
 
-// Add authorization middleware to the pipeline
-app.UseAuthorization();
+
+app.UseAuthentication(); // Add authentication middleware to the pipeline
+
+app.UseAuthorization(); // Add authorization middleware to the pipeline
 
 // Map controller routes
 app.MapControllers();

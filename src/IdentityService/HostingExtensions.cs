@@ -40,9 +40,10 @@ internal static class HostingExtensions
             // Add in-memory identity resources, API scopes, and clients
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
-            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryClients(Config.Clients(builder.Configuration))
             // Add ASP.NET Identity support
-            .AddAspNetIdentity<ApplicationUser>();
+            .AddAspNetIdentity<ApplicationUser>()
+            .AddProfileService<CustomProfileService>();
 
         // Configure the application's cookie settings
         builder.Services.ConfigureApplicationCookie(options =>

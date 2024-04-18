@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,13 +68,15 @@ namespace AuctionService.Controllers
         }
 
         // HTTP POST method to create a new auction.
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<AuctionDto>> CreateAuction(CreateAuctionDto auctionDto)
         {
             // Map the auctionDto to an Auction object.
             var auction = _mapper.Map<Auction>(auctionDto);
-            // Set the seller to "test" (this should be replaced with the current user).
-            auction.Seller = "test";
+
+            // Set the seller of the auction to the current user's username.
+            auction.Seller = User.Identity.Name;
 
             // Add the auction to the database context.
             _context.Auctions.Add(auction);
@@ -99,6 +102,7 @@ namespace AuctionService.Controllers
         }
 
         // HTTP PUT method to update an existing auction.
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAuction(Guid Id, UpdateAuctionDto updateAuctionDto)
         {
@@ -108,6 +112,8 @@ namespace AuctionService.Controllers
 
             // If the auction is not found, return a 404 Not Found response.
             if (auction == null) return NotFound();
+
+            if (auction.Seller != User.Identity.Name) return Forbid();
 
             // Update the auction with the data from the updateAuctionDto.
             auction.Item.Platform = updateAuctionDto.Platform ?? auction.Item.Platform;
@@ -130,6 +136,7 @@ namespace AuctionService.Controllers
         }
 
         // HTTP DELETE method to delete an existing auction.
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAuction(Guid id)
         {
@@ -138,6 +145,8 @@ namespace AuctionService.Controllers
 
             // If the auction is not found, return a 404 Not Found response.
             if (auction == null) return NotFound();
+
+            if (auction.Seller != User.Identity.Name) return Forbid();
 
             // Remove the auction from the database context.
             _context.Auctions.Remove(auction);

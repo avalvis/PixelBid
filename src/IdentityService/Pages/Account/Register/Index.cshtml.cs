@@ -8,78 +8,71 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityService.Pages.Register
 {
-    // Apply security-related headers to the response
-    [SecurityHeaders]
-    // Allow unauthenticated users to access this page
-    [AllowAnonymous]
+    [SecurityHeaders] // Apply security-related headers to the response
+    [AllowAnonymous] // Allow unauthenticated users to access this page
     public class Index : PageModel
     {
-        // UserManager is used to manage users in ASP.NET Core Identity
         private readonly UserManager<ApplicationUser> _userManager;
 
-        // Constructor that takes UserManager as a dependency
         public Index(UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager)); // Guard clause to ensure userManager is not null
         }
 
-        // Input model for the page, bound to the form fields
         [BindProperty]
-        public RegisterViewModel Input { get; set; }
+        public RegisterViewModel Input { get; set; } = new RegisterViewModel(); // Initialize to prevent null
 
-        // Indicates whether registration was successful
         [BindProperty]
         public bool RegisterSuccess { get; set; }
 
-        // Handles GET requests to the page
-        public IActionResult OnGet(string returnUrl)
+        public void OnGet(string returnUrl = "")
         {
-            // Initialize the input model with the return URL
-            Input = new RegisterViewModel
-            {
-                ReturnUrl = returnUrl,
-            };
-
-            // Render the page
-            return Page();
+            // Ensure Input is not null and initialize properties
+            Input ??= new RegisterViewModel();
+            Input.ReturnUrl = returnUrl;
         }
 
-        // Handles POST requests to the page
         public async Task<IActionResult> OnPost()
         {
-            // If the button clicked was not the "register" button, redirect to the home page
-            if (Input.Button != "register") return Redirect("~/");
-
-            // If the form data is valid
-            if (ModelState.IsValid)
+            // Check if Input is null or the Button clicked was not the "register" button
+            if (Input == null || Input.Button != "register")
             {
-                // Create a new user
-                var user = new ApplicationUser
-                {
-                    UserName = Input.Username,
-                    Email = Input.Email,
-                    EmailConfirmed = true
-                };
-
-                // Attempt to create the user
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
-                // If the user was created successfully
-                if (result.Succeeded)
-                {
-                    // Add a claim for the user's full name
-                    await _userManager.AddClaimsAsync(user, new Claim[]
-                    {   // JwtClaimTypes.Name is a standard claim type defined by the OpenID Connect specification
-                        new Claim(JwtClaimTypes.Name, Input.FullName)
-                    });
-
-                    // Indicate that registration was successful
-                    RegisterSuccess = true;
-                }
+                return Redirect("~/"); // Redirect if conditions are not met
             }
 
-            // Render the page (with validation errors if any)
-            return Page();
+            // Ensure ModelState is valid and Input.Password is not null
+            if (!ModelState.IsValid || string.IsNullOrEmpty(Input.Password))
+            {
+                // Add model error if password is null or empty
+                ModelState.AddModelError("Input.Password", "Password is required.");
+                return Page(); // Return the page with validation errors
+            }
+
+            // Create a new user with non-null password
+            var user = new ApplicationUser
+            {
+                UserName = Input.Username,
+                Email = Input.Email,
+                EmailConfirmed = true
+            };
+
+            // Attempt to create the user with the validated password
+            var result = await _userManager.CreateAsync(user, Input.Password);
+
+            if (result.Succeeded)
+            {
+                // Add a claim for the user's full name, ensuring no null full name
+                await _userManager.AddClaimsAsync(user, new Claim[]
+                {
+            new Claim(JwtClaimTypes.Name, Input.FullName ?? "") // Handle null FullName using null-coalescing
+                });
+
+                // Indicate that registration was successful
+                RegisterSuccess = true;
+            }
+
+            return Page(); // Return the page to show the result
         }
+
     }
 }
