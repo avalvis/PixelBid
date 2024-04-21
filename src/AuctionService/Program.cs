@@ -46,8 +46,15 @@ builder.Services.AddMassTransit(x =>
     {
         // Configure the RabbitMQ endpoints based on the registered services
         // 'context' provides access to the application's services
-        // 'cfg' is used to configure the interaction with RabbitMQ
-        cfg.Host("192.168.1.239");
+
+        // Configure the host to use the specified RabbitMQ host, username, and password
+        cfg.Host(builder.Configuration["RabbitMq:Host"], "/", h =>
+        {
+            // Set the username and password to the values specified in the configuration
+            h.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
+            h.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
+        });
+
         cfg.ConfigureEndpoints(context);
     });
 });
