@@ -29,9 +29,18 @@ builder.Services.AddMassTransit(x =>
 
     // Configure MassTransit to use RabbitMQ as the message broker
     x.UsingRabbitMq((context, cfg) =>
-    {   // Configure the search-auction-created endpoint
+    {
+        // Configure the search-auction-created endpoint
         cfg.ReceiveEndpoint("search-auction-created", e =>
         {
+            // Configure the host to use the specified RabbitMQ host, username, and password
+            cfg.Host(builder.Configuration["RabbitMq:Host"], "/", h =>
+            {
+                // Set the username and password to the values specified in the configuration
+                h.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
+                h.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
+            });
+
             // Configure the message retry policy for the endpoint
             e.UseMessageRetry(r => r.Interval(5, 5));
             // Configure the AuctionCreatedConsumer for the endpoint
