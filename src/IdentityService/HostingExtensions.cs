@@ -34,6 +34,12 @@ internal static class HostingExtensions
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
 
+                if (builder.Environment.IsEnvironment("Docker"))
+                {
+                    options.IssuerUri = "http//identity-svc";
+                }
+
+
                 // Uncomment the following line to emit a static audience claim
                 // options.EmitStaticAudienceClaim = true;
             })
