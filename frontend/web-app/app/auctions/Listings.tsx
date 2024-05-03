@@ -31,6 +31,7 @@ import { useParamsStore } from '@/hooks/useParamsStore';
 import { shallow } from 'zustand/shallow';
 import qs from 'query-string';
 import EmptyFilter from '../components/EmptyFilter';
+import LoadingComponent from '../components/Loading';
 
 // Define the Listings component
 export default function Listings() {
@@ -65,7 +66,7 @@ export default function Listings() {
     }, [url])
 
     // If data is not yet fetched, render a loading message
-    if (!data) return <div>Loading...</div>
+    if (!data) return <LoadingComponent />
 
     // Render the fetched data
     return (

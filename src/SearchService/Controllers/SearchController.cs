@@ -25,7 +25,7 @@ public class SearchController : ControllerBase
         // Sort the query based on the provided order by parameter
         query = searchParams.OrderBy switch
         {
-            "title" => query.Sort(x => x.Ascending(y => y.Title)), // Sort by title if "title" is provided
+            "title" => query.Sort(x => x.Ascending(y => y.Title)).Sort(x => x.Ascending(a => a.Platform)), // Sort by title if "title" is provided and then by platform
             "new" => query.Sort(x => x.Descending(y => y.CreatedAt)), // Sort by creation date if "new" is provided
             _ => query.Sort(x => x.Ascending(y => y.AuctionEnd)) // Default sort is by auction end date
         };
