@@ -33,7 +33,7 @@ import qs from 'query-string';
 import EmptyFilter from '../components/EmptyFilter';
 import LoadingComponent from '../components/Loading';
 
-// Define the Listings component
+
 export default function Listings() {
     // Create a state variable for storing the fetched data
     const [data, setData] = useState<PagedResult<Auction>>();
@@ -44,7 +44,9 @@ export default function Listings() {
         pageSize: state.pageSize,
         searchTerm: state.searchTerm,
         orderBy: state.orderBy,
-        filterBy: state.filterBy
+        filterBy: state.filterBy,
+        seller: state.seller,
+        winner: state.winner
     }), shallow)
 
     // Get the setParams function from the Zustand store
@@ -79,7 +81,7 @@ export default function Listings() {
 
                 <>
                     {data.totalCount > 0 && <div className='text-neutral-500 mt-4'>Showing {data.results.length} of {data.totalCount} results</div>}
-                    <div className='grid grid-cols-4 gap-6 mt-8'> {/* Replace 8 with the amount of space you want to add */}
+                    <div className='grid grid-cols-4 gap-6 mt-8'>
                         {data.results.map(auction => (
                             <AuctionCard auction={auction} key={auction.id} />
                         ))}

@@ -10,6 +10,8 @@ type State = {
     searchValue: string
     orderBy: string
     filterBy: string
+    seller?: string
+    winner?: string
 }
 
 // Define the actions type
@@ -27,7 +29,9 @@ const initialState: State = {
     searchTerm: '',
     searchValue: '',
     orderBy: 'title',
-    filterBy: 'live'
+    filterBy: 'live',
+    seller: undefined,
+    winner: undefined
 
 }
 
