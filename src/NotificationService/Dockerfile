@@ -22,14 +22,14 @@ COPY src/Contracts/Contracts.csproj src/Contracts/Contracts.csproj
 # Restore the dependencies for the entire solution
 RUN dotnet restore Pixelbid.sln
 
-# Copy the source code of the AuctionService and Contracts projects into the container
-COPY src/AuctionService src/AuctionService
+# Copy the source code of the NotificationService and Contracts projects into the container
+COPY src/NotificationService src/NotificationService
 COPY src/Contracts src/Contracts
 
-# Set the working directory in the container to /app/src/AuctionService
-WORKDIR /app/src/AuctionService
+# Set the working directory in the container to /app/src/NotificationService
+WORKDIR /app/src/NotificationService
 
-# Publish the AuctionService project in Release configuration and output the result to /app/src/out
+# Publish the NotificationService project in Release configuration and output the result to /app/src/out
 RUN dotnet publish -c Release -o /app/src/out
 
 # Start a new stage for the runtime image using the .NET ASP.NET 8.0 image as the base image
@@ -41,5 +41,5 @@ WORKDIR /app
 # Copy the published output from the build stage into the current directory in the container
 COPY --from=build /app/src/out .
 
-# Set the entrypoint for the container to run the AuctionService.dll
-ENTRYPOINT [ "dotnet", "AuctionService.dll" ]
+# Set the entrypoint for the container to run the NotificationService.dll
+ENTRYPOINT [ "dotnet", "NotificationService.dll" ]
