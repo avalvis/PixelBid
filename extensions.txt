@@ -5,7 +5,6 @@ bradlc.vscode-tailwindcss
 ckolkman.vscode-postgres
 codium.codium
 dsznajder.es7-react-js-snippets
-formulahendry.auto-close-tag
 github.copilot
 github.copilot-chat
 mechatroner.rainbow-csv
@@ -30,3 +29,4 @@ patcx.vscode-nuget-gallery
 pkief.material-icon-theme
 postman.postman-for-vscode
 s-nlf-fh.glassit
+zxh404.vscode-proto3

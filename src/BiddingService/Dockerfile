@@ -22,11 +22,11 @@ COPY src/Contracts/Contracts.csproj src/Contracts/Contracts.csproj
 RUN dotnet restore Pixelbid.sln
 
 # Copy the source code of the AuctionService and Contracts projects into the container
-COPY src/AuctionService src/AuctionService
+COPY src/BiddingService src/BiddingService
 COPY src/Contracts src/Contracts
 
 # Set the working directory in the container to /app/src/AuctionService
-WORKDIR /app/src/AuctionService
+WORKDIR /app/src/BiddingService
 
 # Publish the AuctionService project in Release configuration and output the result to /app/src/out
 RUN dotnet publish -c Release -o /app/src/out
@@ -41,4 +41,4 @@ WORKDIR /app
 COPY --from=build /app/src/out .
 
 # Set the entrypoint for the container to run the AuctionService.dll
-ENTRYPOINT [ "dotnet", "AuctionService.dll" ]
+ENTRYPOINT [ "dotnet", "BiddingService.dll" ]

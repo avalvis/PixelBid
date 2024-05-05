@@ -2,6 +2,7 @@
 // Import necessary namespaces
 using AuctionService.Consumers;
 using AuctionService.Data;
+using AuctionService.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +78,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.NameClaimType = "username";
     });
 
+
+builder.Services.AddGrpc();
+
 // Build the application
 var app = builder.Build();
 
@@ -89,6 +93,7 @@ app.UseAuthorization(); // Add authorization middleware to the pipeline
 
 // Map controller routes
 app.MapControllers();
+app.MapGrpcService<GrpcAuctionService>();
 
 // Initialize the database
 // If an error occurs, catch the exception and write it to the console
