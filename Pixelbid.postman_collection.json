@@ -1,0 +1,2435 @@
+{
+	"info": {
+		"_postman_id": "a2ce3b28-65b2-496e-8acb-279996e52197",
+		"name": "Pixelbid",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22644932"
+	},
+	"item": [
+		{
+			"name": "Auction Service",
+			"item": [
+				{
+					"name": "Get all auctions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Should be 10 items', function() {",
+									"    pm.expect(jsonData.length).to.equal(10);",
+									"})",
+									"",
+									"pm.test('First item should be Audi R8', function() {",
+									"    pm.expect(jsonData[0].platform).to.eq('Nintendo Switch');",
+									"    pm.expect(jsonData[0].title).to.eq('Animal Crossing: New Horizons');",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cyberpunk",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Item is Ferrari Spider', function() {",
+									"    pm.expect(jsonData.make).to.eq('Ferrari');",
+									"    pm.expect(jsonData.model).to.eq('Spider');",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/bbab4d5a-8565-48b1-9450-5ac2a5c4a654",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"bbab4d5a-8565-48b1-9450-5ac2a5c4a654"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Auction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response body contains expected properties\", function () {",
+									"    pm.expect(jsonData).to.haveOwnProperty('id');",
+									"    pm.expect(jsonData).to.haveOwnProperty('platform');",
+									"    pm.expect(jsonData).to.haveOwnProperty('title');",
+									"    pm.expect(jsonData).to.haveOwnProperty('year');",
+									"    pm.expect(jsonData).to.haveOwnProperty('imageUrl');",
+									"    pm.expect(jsonData).to.haveOwnProperty('seller');",
+									"    pm.expect(jsonData.status).to.eq('Live');",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"createdItemId\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var date = new Date()",
+									"date.setDate(date.getDate() + 14);",
+									"var dateString = date.toISOString();",
+									"pm.variables.set(\"dateString\", dateString);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"PC\",\n  \"title\": \"Minecraft\",\n  \"genre\": \"Survival\",\n  \"year\": \"2011\",\n  \"playhours\": \"200\",\n  \"imageUrl\": \"https://i5.walmartimages.com/seo/Minecraft-Java-and-Bedrock-Edition-Microsoft-PC-Digital_3c462fe7-0d13-4079-b76d-2c14281d9641.65de36fc4878f6579287f79f6138675f.jpeg\",\n  \"reservePrice\": 15,\n  \"auctionEnd\": \"{{dateString}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the created auction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"platform\": \"PC Updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/{{createdItemId}}",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Updated Auction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Make includes updated', function() {",
+									"    pm.expect(jsonData.make).to.include('Updated');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/{{createdItemId}}",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Auction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/{{createdItemId}}",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deleted Auction - Should return 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 404', function() {",
+									"    pm.response.to.have.status(404);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/{{createdItemId}}",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search Service",
+			"item": [
+				{
+					"name": "Get all items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('First item is Audi', function() {",
+									"    pm.expect(jsonData.results[0].make).to.eq('Audi');",
+									"})",
+									"",
+									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
+									"    pm.expect(jsonData).to.haveOwnProperty('results');",
+									"    pm.expect(jsonData).to.haveOwnProperty('pageCount');",
+									"    pm.expect(jsonData).to.haveOwnProperty('totalCount');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{searchApi}}/api/search",
+							"host": [
+								"{{searchApi}}"
+							],
+							"path": [
+								"api",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all games for ps5",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('First item is Ford', function() {",
+									"    pm.expect(jsonData.results[0].make).to.eq('Ford');",
+									"})",
+									"",
+									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
+									"    pm.expect(jsonData).to.haveOwnProperty('results');",
+									"    pm.expect(jsonData).to.haveOwnProperty('pageCount');",
+									"    pm.expect(jsonData).to.haveOwnProperty('totalCount');",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{searchApi}}/api/search?searchTerm=ps5",
+							"host": [
+								"{{searchApi}}"
+							],
+							"path": [
+								"api",
+								"search"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "ps5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all items With no params",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
+									"    pm.expect(jsonData).to.haveOwnProperty('results');",
+									"    pm.expect(jsonData).to.haveOwnProperty('pageCount');",
+									"    pm.expect(jsonData).to.haveOwnProperty('totalCount');",
+									"})",
+									"",
+									"pm.test('pagecount is 3 and totalCount is 9', function() {",
+									"    pm.expect(jsonData.pageCount).to.eq(3);",
+									"    pm.expect(jsonData.totalCount).to.eq(9);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{searchApi}}/api/search",
+							"host": [
+								"{{searchApi}}"
+							],
+							"path": [
+								"api",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all items With PageSize and PageNumber",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
+									"    pm.expect(jsonData).to.haveOwnProperty('results');",
+									"    pm.expect(jsonData).to.haveOwnProperty('pageCount');",
+									"    pm.expect(jsonData).to.haveOwnProperty('totalCount');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{searchApi}}/api/search?pageNumber=2&pageSize=2",
+							"host": [
+								"{{searchApi}}"
+							],
+							"path": [
+								"api",
+								"search"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "2"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all items With Tony as Seller",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
+									"    pm.expect(jsonData).to.haveOwnProperty('results');",
+									"    pm.expect(jsonData).to.haveOwnProperty('pageCount');",
+									"    pm.expect(jsonData).to.haveOwnProperty('totalCount');",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{searchApi}}/api/search?seller=tony&OrderBy=title",
+							"host": [
+								"{{searchApi}}"
+							],
+							"path": [
+								"api",
+								"search"
+							],
+							"query": [
+								{
+									"key": "seller",
+									"value": "tony"
+								},
+								{
+									"key": "OrderBy",
+									"value": "title"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RabbitMQ",
+			"item": [
+				{
+					"name": "Create new Auction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response body contains expected properties\", function () {",
+									"    pm.expect(jsonData).to.haveOwnProperty('id');",
+									"    pm.expect(jsonData).to.haveOwnProperty('platform');",
+									"    pm.expect(jsonData).to.haveOwnProperty('title');",
+									"    pm.expect(jsonData).to.haveOwnProperty('year');",
+									"    pm.expect(jsonData).to.haveOwnProperty('imageUrl');",
+									"    pm.expect(jsonData).to.haveOwnProperty('seller');",
+									"    pm.expect(jsonData.status).to.eq('Live');",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"createdItemId\", jsonData.id);",
+									"pm.collectionVariables.set(\"createdItemPlayHours\", jsonData.playhours);",
+									"pm.collectionVariables.set(\"createdItemTitle\", jsonData.title);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Get the current date and add 14 days to it",
+									"var date = new Date();",
+									"date.setDate(date.getDate() + 14);",
+									"var dateString = date.toISOString();",
+									"",
+									"// Set the dateString as a local variable",
+									"pm.variables.set(\"dateString\", dateString);",
+									"",
+									"// Define an array of game genres",
+									"const genres = ['Action', 'Adventure', 'RPG', 'Simulation', 'Strategy', 'Sports', 'Puzzle', 'Casual', 'Arcade'];",
+									"",
+									"// Generate a random index based on the array length",
+									"const randomIndex = Math.floor(Math.random() * genres.length);",
+									"",
+									"// Set the random genre as a local variable",
+									"pm.variables.set(\"randomGenre\", genres[randomIndex]);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"PC\",\n  \"title\": \"{{$guid}}\",\n  \"genre\": \"{{$randomGenre}}\",\n  \"year\": \"2021\",\n  \"mileage\": \"{{$randomInt}}\",\n  \"imageUrl\": \"https://storage.googleapis.com/pod_public/1300/183506.jpg\",\n  \"reservePrice\": {{$randomInt}},\n  \"auctionEnd\": \"{{dateString}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Item with createdItemTitle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"var model = pm.collectionVariables.get(\"createdItemModel\");",
+									"var mileage = pm.collectionVariables.get(\"createdItemMileage\");",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Item has correct make and model', function() {",
+									"    pm.expect(jsonData.results[0].model).to.eq(model);",
+									"    pm.expect(jsonData.results[0].mileage).to.eq(mileage);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{searchApi}}/api/search?searchTerm={{createdItemTitle}}}",
+							"host": [
+								"{{searchApi}}"
+							],
+							"path": [
+								"api",
+								"search"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "{{createdItemTitle}}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Identity Service",
+			"item": [
+				{
+					"name": "GetTonyToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"TonyToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "tony",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{identitySvc}}/connect/token",
+							"host": [
+								"{{identitySvc}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJohnToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"JohnToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "john",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{identitySvc}}/connect/token",
+							"host": [
+								"{{identitySvc}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetMariaToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"MariaToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "maria",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{identitySvc}}/connect/token",
+							"host": [
+								"{{identitySvc}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TonyToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/connect/userinfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"connect",
+								"userinfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Auction no auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var date = new Date()",
+									"date.setDate(date.getDate() + 14);",
+									"var dateString = date.toISOString();",
+									"pm.variables.set(\"dateString\", dateString);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"Nintendo Switch\",\n  \"title\": \"Donkey Kong\",\n  \"genre\": \"Platformer\",\n  \"year\": \"1990\",\n  \"playhours\": \"10000\",\n  \"imageUrl\": \"https://upload.wikimedia.org/wikipedia/en/1/14/Donkey_Kong_flier.jpg\",\n  \"reservePrice\": 40,\n  \"auctionEnd\": \"{{dateString}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Auction as Maria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response body contains Maria as seller\", function () {",
+									"    pm.expect(jsonData).to.haveOwnProperty('seller');",
+									"    pm.expect(jsonData.seller).to.eq('maria');",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"createdItemId\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var date = new Date()",
+									"date.setDate(date.getDate() + 14);",
+									"var dateString = date.toISOString();",
+									"pm.variables.set(\"dateString\", dateString);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"Nintendo Switch\",\n  \"title\": \"Donkey Kong\",\n  \"genre\": \"Platformer\",\n  \"year\": \"1990\",\n  \"playhours\": \"10000\",\n  \"imageUrl\": \"https://upload.wikimedia.org/wikipedia/en/1/14/Donkey_Kong_flier.jpg\",\n  \"reservePrice\": 40,\n  \"auctionEnd\": \"{{dateString}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the created auction as Bob",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 403', function() {",
+									"    pm.response.to.have.status(403);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TonyToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"platform\": \"Super Nintendo\",\n    \"title\": \"Monkey Kong\",\n    \"genre\": \"Platformer\",\n    \"playhours\": 100,\n    \"year\": 1991\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/{{createdItemId}}",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the created auction as Alice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"platform\": \"Super Nintendo\",\n    \"title\": \"Monkey Kong\",\n    \"genre\": \"Platformer\",\n    \"playhours\": 100,\n    \"year\": 1991\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/{{createdItemId}}",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Auction as Maria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions/{{createdItemId}}",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gateway Service",
+			"item": [
+				{
+					"name": "GetTonyToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"TonyToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "tony",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{identitySvc}}/connect/token",
+							"host": [
+								"{{identitySvc}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAliceToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"MariaToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "maria",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{identitySvc}}/connect/token",
+							"host": [
+								"{{identitySvc}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Games",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
+									"    pm.expect(jsonData).to.haveOwnProperty('results');",
+									"    pm.expect(jsonData).to.haveOwnProperty('pageCount');",
+									"    pm.expect(jsonData).to.haveOwnProperty('totalCount');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/search",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Nintendo games",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('First item is pc', function() {",
+									"    pm.expect(jsonData.results[0].make).to.eq('PC');",
+									"})",
+									"",
+									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
+									"    pm.expect(jsonData).to.haveOwnProperty('results');",
+									"    pm.expect(jsonData).to.haveOwnProperty('pageCount');",
+									"    pm.expect(jsonData).to.haveOwnProperty('totalCount');",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/search?searchTerm=Nintendo",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "Nintendo"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Auction as Maria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response body contains Maria as seller\", function () {",
+									"    pm.expect(jsonData).to.haveOwnProperty('seller');",
+									"    pm.expect(jsonData.seller).to.eq('maria');",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"createdItemId\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var date = new Date()",
+									"date.setDate(date.getDate() + 14);",
+									"var dateString = date.toISOString();",
+									"pm.variables.set(\"dateString\", dateString);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"Nintendo Switch\",\n  \"title\": \"Donkey Kong 2\",\n  \"genre\": \"Platformer\",\n  \"year\": \"1991\",\n  \"playhours\": \"14\",\n  \"imageUrl\": \"https://i.ibb.co/5YcpBDS/2684856-dkc4crop.jpg\",\n  \"reservePrice\": 45,\n  \"auctionEnd\": \"{{dateString}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway}}/auctions",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Item by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Item has correct make and model', function() {",
+									"    pm.expect(jsonData.make).to.eq('Ford');",
+									"    pm.expect(jsonData.model).to.eq('Escort');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(function(){}, 1000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/auctions/{{createdItemId}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the created auction as Tony",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 403', function() {",
+									"    pm.response.to.have.status(403);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{BobToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"Nintendo Switch\",\n  \"title\": \"Donkey Kong 3\",\n  \"genre\": \"Platformer\",\n  \"playhours\": \"15\",\n  \"reservePrice\": 50,\n  \"auctionEnd\": \"{{dateString}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway}}/auctions/{{createdItemId}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the created auction as Maria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"Nintendo Switch\",\n  \"title\": \"Donkey Kong 3\",\n  \"genre\": \"Platformer\",\n  \"playhours\": \"15\",\n  \"reservePrice\": 50,\n  \"auctionEnd\": \"{{dateString}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway}}/auctions/{{createdItemId}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Updated Item by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Item has correct make and model', function() {",
+									"    pm.expect(jsonData.make).to.eq('Ford Updated');",
+									"    pm.expect(jsonData.model).to.eq('Updated');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(function(){}, 1000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/auctions/{{createdItemId}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Auction as Maria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/auctions/{{createdItemId}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deleted Item (error)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 404', function() {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(function(){}, 1000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/auctions/{{createdItemId}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Services Dockerized",
+			"item": []
+		},
+		{
+			"name": "Bidding Service",
+			"item": [
+				{
+					"name": "GetTonyToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"TonyToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "tony",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{identitySvc}}/connect/token",
+							"host": [
+								"{{identitySvc}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Auction as Tony",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response body contains Maria as seller\", function () {",
+									"    pm.expect(jsonData).to.haveOwnProperty('seller');",
+									"    pm.expect(jsonData.seller).to.eq('tony');",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"createdItemId\", jsonData.id);",
+									"pm.collectionVariables.set(\"createdItemPlayHours\", jsonData.playhours);",
+									"pm.collectionVariables.set(\"createdItemTitle\", jsonData.title);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Get the current date and time",
+									"var date = new Date();",
+									"",
+									"// Add one minute (60,000 milliseconds)",
+									"date.setTime(date.getTime() + 6000);",
+									"",
+									"// Convert the date to an ISO string",
+									"var dateString = date.toISOString();",
+									"",
+									"// Store the date string in a Postman variable",
+									"pm.variables.set(\"dateString\", dateString);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TonyToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"Nintendo Switch\",\n  \"title\": \"Dead Cells\",\n  \"genre\": \"Platformer\",\n  \"year\": \"2020\",\n  \"playhours\": \"100\",\n  \"imageUrl\": \"https://i.ibb.co/ZJTcHnL/dead-cells-pc-cover.jpg\",\n  \"reservePrice\": 20,\n  \"auctionEnd\": \"{{dateString}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auctionApi}}/api/auctions",
+							"host": [
+								"{{auctionApi}}"
+							],
+							"path": [
+								"api",
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJohnToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"JohnToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "john",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/connect/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetMariaToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"MariaToken\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "maria",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Pass123$",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "postman",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "auctionApp openid profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{identitySvc}}/connect/token",
+							"host": [
+								"{{identitySvc}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bid As Maria for 100",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{bidSvc}}/api/bids?auctionId={{createdItemId}}&amount=2",
+							"host": [
+								"{{bidSvc}}"
+							],
+							"path": [
+								"api",
+								"bids"
+							],
+							"query": [
+								{
+									"key": "auctionId",
+									"value": "{{createdItemId}}"
+								},
+								{
+									"key": "amount",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bid As John for 200",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JohnToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{bidSvc}}/api/bids?auctionId={{createdItemId}}&amount=200",
+							"host": [
+								"{{bidSvc}}"
+							],
+							"path": [
+								"api",
+								"bids"
+							],
+							"query": [
+								{
+									"key": "auctionId",
+									"value": "{{createdItemId}}"
+								},
+								{
+									"key": "amount",
+									"value": "200"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get bids for auction",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bidSvc}}/api/bids/{{createdItemId}}",
+							"host": [
+								"{{bidSvc}}"
+							],
+							"path": [
+								"api",
+								"bids",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Created Auction details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/auctions/{{createdItemId}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions",
+								"{{createdItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Created Auction search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/search?pageSize=100&searchTerm={{createdItemTitle}}",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "100"
+								},
+								{
+									"key": "searchTerm",
+									"value": "{{createdItemTitle}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create 10 second Auction as Tony",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response body contains Maria as seller\", function () {",
+									"    pm.expect(jsonData).to.haveOwnProperty('seller');",
+									"    pm.expect(jsonData.seller).to.eq('tony');",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"createdItemId\", jsonData.id);",
+									"pm.collectionVariables.set(\"createdItemPlayHours\", jsonData.playhours);",
+									"pm.collectionVariables.set(\"createdItemTitle\", jsonData.title);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var date = new Date(new Date().getTime() + 10000);",
+									"var dateString = date.toISOString();",
+									"pm.variables.set(\"dateString\", dateString);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TonyToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": \"Nintendo Switch\",\n  \"title\": \"Donkey Kong 19\",\n  \"genre\": \"Platformer\",\n  \"year\": \"2020\",\n  \"playhours\": \"100\",\n  \"imageUrl\": \"https://i.ibb.co/5YcpBDS/2684856-dkc4crop.jpg\",\n  \"reservePrice\": 10,\n  \"auctionEnd\": \"{{dateString}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway}}/auctions",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"auctions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Created Auction with finished filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/search?pageSize=100&searchTerm={{createdItemTitle}}&filterBy=finished",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "100"
+								},
+								{
+									"key": "searchTerm",
+									"value": "{{createdItemTitle}}"
+								},
+								{
+									"key": "filterBy",
+									"value": "finished"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bid on Seeded Auction (test grpc)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{MariaToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{bidSvc}}/api/bids?auctionId=6a5011a1-fe1f-47df-9a32-b5346b289391&amount=100",
+							"host": [
+								"{{bidSvc}}"
+							],
+							"path": [
+								"api",
+								"bids"
+							],
+							"query": [
+								{
+									"key": "auctionId",
+									"value": "6a5011a1-fe1f-47df-9a32-b5346b289391"
+								},
+								{
+									"key": "amount",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "auctionApi",
+			"value": "http://localhost:7001",
+			"type": "string"
+		},
+		{
+			"key": "searchApi",
+			"value": "http://localhost:7002",
+			"type": "string"
+		},
+		{
+			"key": "bidSvc",
+			"value": "http://localhost:7003",
+			"type": "string"
+		},
+		{
+			"key": "identitySvc",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "gateway",
+			"value": "http://localhost:6001",
+			"type": "string"
+		},
+		{
+			"key": "TonyToken",
+			"value": ""
+		},
+		{
+			"key": "MariaToken",
+			"value": ""
+		},
+		{
+			"key": "JohnToken",
+			"value": ""
+		},
+		{
+			"key": "createdItemId",
+			"value": ""
+		},
+		{
+			"key": "createdItemTitle",
+			"value": ""
+		},
+		{
+			"key": "createdItemPlatform",
+			"value": ""
+		},
+		{
+			"key": "createdItemPlayHours",
+			"value": ""
+		},
+		{
+			"key": "BobToken",
+			"value": ""
+		},
+		{
+			"key": "AliceToken",
+			"value": ""
+		}
+	]
+}
