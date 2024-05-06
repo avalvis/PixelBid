@@ -5,7 +5,7 @@ export default function Page({ searchParams }: { searchParams: { callbackUrl: st
   return (
     <EmptyFilter
       title='You are not logged in'
-      subtitle='click below to sign in'
+      subtitle='click below to log in'
       showLogin
       callbackUrl={searchParams.callbackUrl}
     />

@@ -24,7 +24,7 @@ export default function AuctionCard({ auction }: Props) {
                 </div>
             </div>
             <div className='flex justify-between items-center mt-4'>
-                <h3 className='text-gray-700'>
+                <h3 className='text-1xl font-bold text-gray-600'>
                     {auction.platform} - {auction.title}
                 </h3>
                 <p className='font-semibold text-sm'>

@@ -7,15 +7,15 @@
 
 import { getTokenWorkaround } from "@/app/actions/authActions";
 
-// Base URL for all requests
-const baseUrl = 'http://localhost:6001/'
+// Base URL for all requests read from env.local
+const baseUrl = process.env.API_URL;
 
 // Function to make a GET request
 async function get(url: string) {
     const requestOptions = {
         method: 'GET',
         // Get the headers for the request
-        header: await getHeaders()
+        headers: await getHeaders()
     }
 
     // Make the request and handle the response

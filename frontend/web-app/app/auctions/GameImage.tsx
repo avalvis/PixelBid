@@ -7,7 +7,7 @@ type Props = {
     imageUrl: string
 }
 
-export default function CarImage({ imageUrl }: Props) {
+export default function GameImage({ imageUrl }: Props) {
     const [isLoading, setLoading] = useState(true);
     return (
         <div className="rounded-lg overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-500 ease-in-out">

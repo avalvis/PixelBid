@@ -25,7 +25,7 @@ export default function EmptyFilter({
 
     return (
         <div className='h-[40vh] flex flex-col gap-2 justify-center items-center shadow-lg'>
-            <Heading title={title} subtitle={subtitle} center />
+            <Heading title={title} subtitle={subtitle} className="text-green-800" />
             <div className='mt-4'>
                 {showReset && (
                     <Button outline onClick={reset}>Clear Filters</Button>

@@ -2,12 +2,13 @@ import { getBidsForAuction, getDetailedViewData } from '@/app/actions/auctionAct
 import Heading from '@/app/components/Heading';
 import React from 'react'
 import CountdownTimer from '../../CountdownTimer';
-import GameImage from '../../GameImage';
 import DetailedSpecs from './DetailedSpecs';
 import { getCurrentUser } from '@/app/actions/authActions';
 import EditButton from './EditButton';
 import DeleteButton from './DeleteButton';
 import BidList from './BidList';
+import ItemImage from '../../ItemImage';
+import GameImage from '../../GameImage';
 
 
 export default async function Details({ params }: { params: { id: string } }) {

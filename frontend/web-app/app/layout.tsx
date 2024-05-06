@@ -17,10 +17,10 @@ export default async function RootLayout({
   const user = await getCurrentUser();
   return (
     <html lang="en">
-      <body>
+      <body style={{ backgroundColor: '#F6E9B2' }}>
         <ToasterProvider />
         <Navbar />
-        <main className='container mx-auto px-5 pt-10'>
+        <main style={{ backgroundColor: '#F6E9B2' }} className="container mx-auto px-5 pt-10">
           <SignalRProvider user={user}>
             {children}
           </SignalRProvider>

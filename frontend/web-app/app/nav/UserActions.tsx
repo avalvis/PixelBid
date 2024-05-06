@@ -35,7 +35,7 @@ export default function UserActions({ user }: Props) {
     }
 
     return (
-        <Dropdown key={key} label={`Welcome ${user.name}`} inline>
+        <Dropdown key={key} label={`Welcome, ${user.name}`} inline>
             <Dropdown.Item icon={HiUser} onClick={setSeller}>
                 My Auctions
             </Dropdown.Item>
