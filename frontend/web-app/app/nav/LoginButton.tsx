@@ -27,7 +27,7 @@ const StyledButton = styled.button`
 
 export default function LoginButton() {
     return (
-        <StyledButton onClick={() => signIn('id-server', { callbackUrl: '/' })}>
+        <StyledButton onClick={() => signIn('id-server', { callbackUrl: '/' }, { prompt: 'login' })}>
             Login
         </StyledButton>
     )

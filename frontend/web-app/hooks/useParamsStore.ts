@@ -1,3 +1,12 @@
+/**
+ * This file defines a Zustand store for managing URL parameters.
+ * The store has an initial state with default parameters.
+ * It provides three actions: setParams, reset, and setSearchValue.
+ * setParams is used to update any of the parameters.
+ * reset is used to reset all parameters to their initial values.
+ * setSearchValue is used to update the searchValue parameter.
+ */
+
 // Import the create function from zustand
 import { create } from "zustand"
 
@@ -32,13 +41,11 @@ const initialState: State = {
     filterBy: 'live',
     seller: undefined,
     winner: undefined
-
 }
 
 // Create a store using zustand. The store will have the state and actions defined above.
-export const useParamsStore = create<State & Actions>()((set) => ({
-    // Spread the initial state into the store's state
-    ...initialState,
+export const useParamsStore = create<State & Actions>((set) => ({
+    ...initialState, // Spread the initial state into the store's state
 
     // Define the setParams action. This action takes a Partial<State> as a parameter,
     // and merges it into the current state. If the new params include a pageNumber,
@@ -57,6 +64,6 @@ export const useParamsStore = create<State & Actions>()((set) => ({
     // Define the reset action. This action resets the state to the initial state.
     reset: () => set(initialState),
 
-    setSearchValue: (value: string) =>
-        set({ searchValue: value })
+    // Define the setSearchValue action. This action updates the searchValue parameter.
+    setSearchValue: (value: string) => set({ searchValue: value })
 }))

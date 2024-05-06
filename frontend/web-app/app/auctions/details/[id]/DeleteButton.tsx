@@ -2,7 +2,6 @@
 
 import { deleteAuction } from '@/app/actions/auctionActions';
 import { Button } from 'flowbite-react';
-import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast';
 
@@ -12,17 +11,25 @@ type Props = {
 
 export default function DeleteButton({ id }: Props) {
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
 
-    function doDelete() {
+    async function doDelete() {
+        const confirmDelete = window.confirm('Are you sure you want to delete your auction?');
+
+        if (!confirmDelete) {
+            return;
+        }
+
         setLoading(true);
-        deleteAuction(id)
-            .then(res => {
-                if (res.error) throw res.error;
-                router.push('/');
-            }).catch(error => {
-                toast.error('Ooops' + error.status + ' ' + error.message)
-            }).finally(() => setLoading(false))
+        try {
+            const res = await deleteAuction(id);
+            if (res.error) throw res.error;
+            window.location.href = '/';
+        } catch (error) {
+            const err = error as Error;
+            toast.error('Ooops' + err.message);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (

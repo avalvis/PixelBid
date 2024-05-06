@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { Auction } from '@/types';
 import { createAuction, updateAuction } from '../actions/auctionActions';
+import Link from 'next/link';
 
 
 type Props = {
@@ -90,7 +91,9 @@ export default function AuctionForm({ auction }: Props) {
 
 
             <div className='flex justify-between'>
-                <Button outline color='gray'>Cancel</Button>
+                <Link href="/">
+                    <Button outline color='gray'>Cancel</Button>
+                </Link>
                 <Button
                     isProcessing={isSubmitting}
                     disabled={!isValid}

@@ -118,7 +118,7 @@ services:
       - rabbitmq
   # Notification service container
   notify-svc:
-    image: avalvis/bid-svc:latest
+    image: avalvis/notify-svc:latest
     build:
       context: .
       dockerfile: src/NotificationService/Dockerfile
