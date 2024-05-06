@@ -46,7 +46,7 @@ namespace IdentityService
                     ClientSecrets = {new Secret("nextclient".Sha256())},
                     AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                     RequirePkce = false,
-                    RedirectUris = {"http://localhost:3000/api/auth/callback/id-server"},
+                    RedirectUris = {config["ClientApp"] + "/api/auth/callback/id-server"},
                     AllowOfflineAccess = true,
                     AllowedScopes = {"openid", "profile", "auctionApp"},
                     AccessTokenLifetime = 3600*24*30,

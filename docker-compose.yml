@@ -1,5 +1,11 @@
 # Docker Compose file
 
+networks:
+  custom:
+    ipam:
+      config:
+        - subnet: "10.5.0.0/16"
+
 # PostgreSQL container
 services:
   postgres:
@@ -10,8 +16,10 @@ services:
       - 5432:5432
     volumes:
       - /var/lib/postresql/data
+    networks:
+      custom:
 
-  # MongoDB container
+        # MongoDB container  
   mongodb:
     image: mongo
     environment:
@@ -21,15 +29,19 @@ services:
       - 27017:27017
     volumes:
       - /var/lib/mongodb/data
+    networks:
+      custom:
 
-  # RabbitMQ container
+        # RabbitMQ container
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      custom:
 
-  # Auction service container
+        # Auction service container
   auction-svc:
     image: avalvis/auction-svc:latest
     build:
@@ -52,8 +64,10 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+    networks:
+      custom:
 
-  # Search service container
+        # Search service container
   search-svc:
     image: avalvis/search-svc:latest
     build:
@@ -70,8 +84,10 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
+    networks:
+      custom:
 
-  # Identity service container
+        # Identity service container
   identity-svc:
     image: avalvis/identity-svc:latest
     build:
@@ -80,11 +96,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:80
+      - ClientApp=http://app.pixelbid.com
       - ConnectionStrings__DefaultConnection=Server=postgres:5432;User Id=postgres;Password=postgrespw;Database=identity
-    ports:
-      - 5000:80
+      - VIRTUAL_HOST=id.pixelbid.com
     depends_on:
       - postgres
+    networks:
+      custom:
+        ipv4_address: 10.5.0.200
 
   # Gateway service container
   gateway-svc:
@@ -95,10 +114,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:80
-    ports:
-      - 6001:80
+      - ClientApp=https://app.pixelbid.com
+      - VIRTUAL_HOST=api.pixelbid.com
+    networks:
+      custom:
 
-  # Bidding service container
+        # Bidding service container
   bid-svc:
     image: avalvis/bid-svc:latest
     build:
@@ -116,7 +137,10 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
-  # Notification service container
+    networks:
+      custom:
+
+        # Notification service container
   notify-svc:
     image: avalvis/notify-svc:latest
     build:
@@ -130,3 +154,39 @@ services:
       - 7004:80
     depends_on:
       - rabbitmq
+    networks:
+      custom:
+
+        # Next Client service container
+  web-app:
+    image: avalvis/web-app
+    build:
+      context: .
+      dockerfile: frontend/web-app/Dockerfile
+    volumes:
+      - /var/lib/web/data
+    extra_hosts:
+      - id.pixelbid.com:10.5.0.200
+    environment:
+      - NEXTAUTH_SECRET=mynextauthsecret
+      - NEXTAUTH_URL=http://app.pixelbid.com
+      - NEXTAUTH_URL_INTERNAL=http://web-app:3000
+      - API_URL=http://gateway-svc/
+      - ID_URL=http://id.pixelbid.com
+      - NEXT_PUBLIC_NOTIFY_URL=http://gateway-svc/notifications
+      - VIRTUAL_HOST=app.pixelbid.com
+      - VIRTUAL_PORT=3000
+    networks:
+      custom:
+
+        # Nginx proxy container
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      custom:
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./devcerts:/etc/nginx/certs
