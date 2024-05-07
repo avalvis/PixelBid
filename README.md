@@ -66,5 +66,6 @@ Each service comes with a Postman collection to test its endpoints. Import these
 Follow the instructions in the `docker-compose.yml` file to deploy the services using Docker. Ensure all services are properly networked for seamless interaction.
 
 Don't forget to add the line below to your hosts file:
+
 127.0.0.1 id.pixelbid.com app.pixelbid.com api.pixelbid.com
 
