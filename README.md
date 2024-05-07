@@ -29,7 +29,7 @@ cd pixelbid
 Use Docker Compose to run all the services:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 This command builds and starts all the services defined in your `docker-compose.yml` file.
