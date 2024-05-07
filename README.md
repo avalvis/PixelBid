@@ -14,7 +14,7 @@ To verify Docker and Docker Compose are installed, run the following commands in
 ```bash
 docker --version
 docker compose version
-
+```
 
 ### Setup
 
