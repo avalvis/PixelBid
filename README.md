@@ -1,5 +1,5 @@
 
-# PixelBid: Microservices Video Game Auction Web App
+# PixelBid: Microservices Video Game Auction App
 
 Welcome to PixelBid, a microservices-based web application for auctioning video games. This project is structured around multiple microservices, each handling a specific part of the application, from auction handling to user authentication and gateway management.
 
@@ -65,6 +65,6 @@ Each service comes with a Postman collection to test its endpoints. Import these
 
 Follow the instructions in the `docker-compose.yml` file to deploy the services using Docker. Ensure all services are properly networked for seamless interaction.
 
-Also, add the line below to your hosts file:
+Don't forget to add the line below to your hosts file:
 127.0.0.1 id.pixelbid.com app.pixelbid.com api.pixelbid.com
 
