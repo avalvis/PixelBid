@@ -65,7 +65,46 @@ Each service comes with a Postman collection to test its endpoints. Import these
 
 Follow the instructions in the `docker-compose.yml` file to deploy the services using Docker. Ensure all services are properly networked for seamless interaction.
 
-Don't forget to add the line below to your hosts file:
+The hosts file is a computer file used by an operating system to map hostnames to IP addresses. In this case, the line `127.0.0.1 id.pixelbid.com app.pixelbid.com api.pixelbid.com` is mapping the hostnames `id.pixelbid.com`, `app.pixelbid.com`, and `api.pixelbid.com` to the IP address `127.0.0.1`, which is the loopback address, often referred to as `localhost`.
 
-127.0.0.1 id.pixelbid.com app.pixelbid.com api.pixelbid.com
+The reason for adding these entries to your hosts file is to allow your local machine to recognize these hostnames and direct traffic to the correct local IP address. This is particularly useful when you're developing locally and want to simulate a production-like environment with different subdomains for different services, but without the need to set up DNS records.
 
+In the context of the PixelBid application:
+
+- `id.pixelbid.com` is be the hostname for the Identity Service.
+- `app.pixelbid.com` is the hostname for the main client application Service.
+- `api.pixelbid.com` is the hostname for the API endpoints.
+
+By adding these entries to your hosts file, when your application tries to reach `id.pixelbid.com`, for example, the operating system will direct that to your local machine (`127.0.0.1`). This allows you to develop and test your microservices locally as if they were in a production environment.
+
+## Environment Variables for Frontend
+
+The frontend of the application also requires certain environment variables to function correctly. These are stored in a `.env.local` file in the root of the frontend directory. 
+
+Here's an example of what the `.env.local` file might look like:
+
+```shellscript
+NEXTAUTH_SECRET=your_next_auth_secret
+NEXTAUTH_URL=http://your_frontend_url
+API_URL=http://your_gateway_service_url/
+ID_URL=http://your_identity_service_url
+NEXT_PUBLIC_NOTIFY_URL=http://your_notification_service_url/notifications
+```
+
+Replace the placeholder values with your actual data:
+
+- `NEXTAUTH_SECRET`: A secret key used by NextAuth for encryption.
+- `NEXTAUTH_URL`: The URL where your Next.js application is running.
+- `API_URL`: The URL of your Gateway service.
+- `ID_URL`: The URL of your Identity service.
+- `NEXT_PUBLIC_NOTIFY_URL`: The URL of your Notification service.
+
+Remember, never commit your `.env.local` file to the repository. It contains sensitive information that should not be shared publicly. The `.gitignore` file should already include `.env.local` to prevent it from being committed. If it doesn't, add `.env.local` to `.gitignore`.
+
+## Microservices Configuration
+
+Each microservice in the application has its own configuration files, typically named `appsettings.json` or similar. These files contain settings specific to that microservice, such as database connection strings, service URLs, and other configuration options.
+
+You will need to adjust these settings according to your environment. For example, if you're running the services locally, you might for example set the database connection string to `mongodb://localhost:27017`. If you're deploying to a cloud environment, you would use the connection string provided by your cloud database service.
+
+Remember to keep sensitive information out of your codebase. Use environment variables or secure configuration services to manage this data.
