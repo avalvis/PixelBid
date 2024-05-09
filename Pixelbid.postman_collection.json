@@ -66,8 +66,8 @@
 									"})",
 									"",
 									"pm.test('Item is Ferrari Spider', function() {",
-									"    pm.expect(jsonData.make).to.eq('Ferrari');",
-									"    pm.expect(jsonData.model).to.eq('Spider');",
+									"    pm.expect(jsonData.platform).to.eq('Ferrari');",
+									"    pm.expect(jsonData.title).to.eq('Spider');",
 									"})"
 								],
 								"type": "text/javascript",
@@ -215,8 +215,8 @@
 									"    pm.response.to.have.status(200);",
 									"})",
 									"",
-									"pm.test('Make includes updated', function() {",
-									"    pm.expect(jsonData.make).to.include('Updated');",
+									"pm.test('Platform includes updated', function() {",
+									"    pm.expect(jsonData.platform).to.include('Updated');",
 									"})"
 								],
 								"type": "text/javascript"
@@ -323,7 +323,7 @@
 									"})",
 									"",
 									"pm.test('First item is Audi', function() {",
-									"    pm.expect(jsonData.results[0].make).to.eq('Audi');",
+									"    pm.expect(jsonData.results[0].platform).to.eq('Audi');",
 									"})",
 									"",
 									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
@@ -366,7 +366,7 @@
 									"})",
 									"",
 									"pm.test('First item is Ford', function() {",
-									"    pm.expect(jsonData.results[0].make).to.eq('Ford');",
+									"    pm.expect(jsonData.results[0].platform).to.eq('Ford');",
 									"})",
 									"",
 									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
@@ -641,15 +641,15 @@
 							"script": {
 								"exec": [
 									"var jsonData = pm.response.json();",
-									"var model = pm.collectionVariables.get(\"createdItemModel\");",
+									"var title = pm.collectionVariables.get(\"createdItemTitle\");",
 									"var mileage = pm.collectionVariables.get(\"createdItemMileage\");",
 									"",
 									"pm.test('Status code is 200', function() {",
 									"    pm.response.to.have.status(200);",
 									"})",
 									"",
-									"pm.test('Item has correct make and model', function() {",
-									"    pm.expect(jsonData.results[0].model).to.eq(model);",
+									"pm.test('Item has correct platform and title', function() {",
+									"    pm.expect(jsonData.results[0].title).to.eq(title);",
 									"    pm.expect(jsonData.results[0].mileage).to.eq(mileage);",
 									"})"
 								],
@@ -1047,7 +1047,7 @@
 					"response": []
 				},
 				{
-					"name": "Update the created auction as Bob",
+					"name": "Update the created auction as Tony",
 					"event": [
 						{
 							"listen": "test",
@@ -1099,7 +1099,7 @@
 					"response": []
 				},
 				{
-					"name": "Update the created auction as Alice",
+					"name": "Update the created auction as Maria",
 					"event": [
 						{
 							"listen": "test",
@@ -1266,7 +1266,7 @@
 					"response": []
 				},
 				{
-					"name": "GetAliceToken",
+					"name": "GetMariaToken",
 					"event": [
 						{
 							"listen": "test",
@@ -1384,7 +1384,7 @@
 									"})",
 									"",
 									"pm.test('First item is pc', function() {",
-									"    pm.expect(jsonData.results[0].make).to.eq('PC');",
+									"    pm.expect(jsonData.results[0].platform).to.eq('PC');",
 									"})",
 									"",
 									"pm.test('Result includes results, pagecount and totalcount properties', function() {",
@@ -1504,9 +1504,9 @@
 									"    pm.response.to.have.status(200);",
 									"})",
 									"",
-									"pm.test('Item has correct make and model', function() {",
-									"    pm.expect(jsonData.make).to.eq('Ford');",
-									"    pm.expect(jsonData.model).to.eq('Escort');",
+									"pm.test('Item has correct platform and title', function() {",
+									"    pm.expect(jsonData.platform).to.eq('Ford');",
+									"    pm.expect(jsonData.title).to.eq('Escort');",
 									"})"
 								],
 								"type": "text/javascript"
@@ -1560,7 +1560,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{BobToken}}",
+									"value": "{{TonyToken}}",
 									"type": "string"
 								}
 							]
@@ -1653,9 +1653,9 @@
 									"    pm.response.to.have.status(200);",
 									"})",
 									"",
-									"pm.test('Item has correct make and model', function() {",
-									"    pm.expect(jsonData.make).to.eq('Ford Updated');",
-									"    pm.expect(jsonData.model).to.eq('Updated');",
+									"pm.test('Item has correct platform and title', function() {",
+									"    pm.expect(jsonData.platform).to.eq('Ford Updated');",
+									"    pm.expect(jsonData.title).to.eq('Updated');",
 									"})"
 								],
 								"type": "text/javascript"
@@ -2424,11 +2424,11 @@
 			"value": ""
 		},
 		{
-			"key": "BobToken",
+			"key": "TonyToken",
 			"value": ""
 		},
 		{
-			"key": "AliceToken",
+			"key": "MariaToken",
 			"value": ""
 		}
 	]
