@@ -3,6 +3,11 @@
 
 Welcome to PixelBid, a microservices-based web application for auctioning video games. This project is structured around multiple microservices, each handling a specific part of the application, from auction handling to user authentication and gateway management.
 
+![image](https://github.com/avalvis/PixelBid/assets/115991962/85a61c47-f5a1-49d8-9069-b122a1f2a212)
+
+![image](https://github.com/avalvis/PixelBid/assets/115991962/f7189e89-65d3-4888-83d0-7a0ae5a301cd)
+
+
 ## Getting Started
 
 ## Prerequisites
@@ -44,6 +49,10 @@ PixelBid is composed of several services, each residing in its own directory:
 - **Gateway Service**: Acts as the entry point for all requests and routes them to appropriate services.
 - **Bid Service**: Handles all bid-related operations.
 - **Notification Service**: Manages real-time notifications via SignalR.
+
+
+![image](https://github.com/avalvis/PixelBid/assets/115991962/eccfe3f3-b922-4d4a-a3d3-280c5d504043)
+
 
 ## Client Application
 
