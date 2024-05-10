@@ -5,8 +5,6 @@ Welcome to PixelBid, a microservices-based web application for auctioning video 
 
 ![image](https://github.com/avalvis/PixelBid/assets/115991962/85a61c47-f5a1-49d8-9069-b122a1f2a212)
 
-![image](https://github.com/avalvis/PixelBid/assets/115991962/f7189e89-65d3-4888-83d0-7a0ae5a301cd)
-
 
 ## Getting Started
 
@@ -117,3 +115,6 @@ Each microservice in the application has its own configuration files, typically 
 You will need to adjust these settings according to your environment. For example, if you're running the services locally, you might for example set the database connection string to `mongodb://localhost:27017`. If you're deploying to a cloud environment, you would use the connection string provided by your cloud database service.
 
 Remember to keep sensitive information out of your codebase. Use environment variables or secure configuration services to manage this data.
+
+![image](https://github.com/avalvis/PixelBid/assets/115991962/a9578627-7b20-4ecc-8b3f-78ac8b9fce28)
+
